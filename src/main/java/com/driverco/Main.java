@@ -16,6 +16,8 @@
 
 package com.driverco;
 
+import com.driverco.security.model.AppUser;
+import com.google.common.hash.Hashing;
 import com.zaxxer.hikari.HikariConfig; 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sql.DataSource;
+
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -57,6 +63,10 @@ public class Main {
   String index() {
     return "index";
   }
+  @RequestMapping("/access-denied")
+  public String accessDenied() {
+      return "/error/access-denied";
+  }
   
   @RequestMapping("/hello")
   String hello(Map<String, Object> model) {
@@ -69,18 +79,32 @@ public class Main {
       model.put("science", "E=mc^2: " + energy + " = "  + m.toString());
       return "hello";
   }
+  @RequestMapping("/Login")
+  String login(Model model, @RequestParam(value = "userName", required = false) String  userName, @RequestParam(value = "encryptedPassword", required = false) String  encryptedPassword) {
+	  
+	  try {
+		  if (encryptedPassword.length() > 0 ) ;
+		  String sha256hex = Hashing.sha256().hashString(encryptedPassword, StandardCharsets.UTF_8).toString().toUpperCase();
+		  System.out.println("password:"+encryptedPassword+"::"+sha256hex+"::"+encryptedPassword.length() );
+	          return "index";
+	  }catch (NullPointerException npe) {
+          RelativisticModel.select();
+          model.addAttribute("AppUser", new AppUser());
+          return "login";
+      }
+  }
 
   @RequestMapping("/db")
   String db(Map<String, Object> model) {
     try (Connection connection = dataSource.getConnection()) {
       Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
-      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-      ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
+      /*stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
+      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");*/
+      ResultSet rs = stmt.executeQuery("SELECT USER_ID, USER_NAME, ENCRYTED_PASSWORD, ENABLED from dbo.App_User");
 
       ArrayList<String> output = new ArrayList<String>();
       while (rs.next()) {
-        output.add("Read from DB: " + rs.getTimestamp("tick"));
+          output.add("Read from DB: " + rs.getString("USER_ID") +":"+ rs.getString("USER_NAME"));
       }
 
       model.put("records", output);
