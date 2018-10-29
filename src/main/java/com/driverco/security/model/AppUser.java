@@ -5,13 +5,27 @@ public class AppUser {
     private Long userId;
     private String userName;
     private String encryptedPassword;
- 
-    public AppUser() {
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String cellphone;
+    
+    public AppUser(String userName, String encryptedPassword, String firstName, String lastName, String email,
+			String cellphone) {
+		super();
+		this.userName = userName;
+		this.encryptedPassword = encryptedPassword;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.cellphone = cellphone;
+	}
+
+	public AppUser() {
  
     }
  
-    public AppUser(Long userId, String userName, String encryptedPassword) {
-        this.userId = userId;
+    public AppUser(String userName, String encryptedPassword) {
         this.userName = userName;
         this.encryptedPassword = encryptedPassword;
     }
@@ -40,7 +54,39 @@ public class AppUser {
         this.encryptedPassword = encryptedPassword;
     }
  
-    @Override
+    public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCellphone() {
+		return cellphone;
+	}
+
+	public void setCellphone(String cellphone) {
+		this.cellphone = cellphone;
+	}
+
+	@Override
     public String toString() {
         return this.userName + "/" + this.encryptedPassword;
     }

@@ -79,6 +79,20 @@ public class Main {
       }
   }
 
+  @RequestMapping("/Register")
+  String Register(Model model, @RequestParam(value = "userName", required = false) String  userName, @RequestParam(value = "encryptedPassword", required = false) String  encryptedPassword) {
+	  
+	  try {
+		  if (encryptedPassword.length() > 0 ) ;
+		  String sha256hex = Hashing.sha256().hashString(encryptedPassword, StandardCharsets.UTF_8).toString().toUpperCase();
+		  System.out.println("password:"+encryptedPassword+"::"+sha256hex+"::"+encryptedPassword.length() );
+	          return "index";
+	  }catch (NullPointerException npe) {
+          model.addAttribute("AppUser", new AppUser());
+          return "register";
+      }
+  }
+
   @RequestMapping("/db")
   String db(Map<String, Object> model) {
     try (Connection connection = dataSource.getConnection()) {
