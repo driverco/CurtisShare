@@ -40,10 +40,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static javax.measure.unit.SI.KILOGRAM;
-import javax.measure.quantity.Mass;
-import org.jscience.physics.model.RelativisticModel;
-import org.jscience.physics.amount.Amount;
 
 @Controller
 @SpringBootApplication
@@ -68,17 +64,7 @@ public class Main {
       return "/error/access-denied";
   }
   
-  @RequestMapping("/hello")
-  String hello(Map<String, Object> model) {
-      RelativisticModel.select();
-      String energy = System.getenv().get("ENERGY");
-      if (energy == null) {
-         energy = "12 GeV";
-      }
-      Amount<Mass> m = Amount.valueOf(energy).to(KILOGRAM);
-      model.put("science", "E=mc^2: " + energy + " = "  + m.toString());
-      return "hello";
-  }
+ 
   @RequestMapping("/Login")
   String login(Model model, @RequestParam(value = "userName", required = false) String  userName, @RequestParam(value = "encryptedPassword", required = false) String  encryptedPassword) {
 	  
@@ -88,7 +74,6 @@ public class Main {
 		  System.out.println("password:"+encryptedPassword+"::"+sha256hex+"::"+encryptedPassword.length() );
 	          return "index";
 	  }catch (NullPointerException npe) {
-          RelativisticModel.select();
           model.addAttribute("AppUser", new AppUser());
           return "login";
       }
